@@ -1529,7 +1529,7 @@
 
         response.finish();
         _this.errors.synchronization.concat(response.errors);
-        deferred.resolve(response.data);
+        deferred.resolve(response);
       }
 
       function reject(response) {
@@ -1618,7 +1618,7 @@
             }
           });
 
-          deferred.resolve(response.data);
+          deferred.resolve(response);
         }
       }
 
@@ -1860,7 +1860,7 @@
             }
           });
 
-          deferred.resolve(response.data);
+          deferred.resolve(response);
         }
       }
 
@@ -2174,6 +2174,38 @@
   'use strict';
 
   angular.module('angular-jsonapi')
+  .factory('AngularJsonAPIModelSourceError', AngularJsonAPIModelSourceErrorWrapper);
+
+  function AngularJsonAPIModelSourceErrorWrapper() {
+    SourceError.prototype = Object.create(Error.prototype);
+    SourceError.prototype.constructor = SourceError;
+    SourceError.prototype.name = 'SourceError';
+
+    return {
+      create: SourceErrorFactory
+    };
+
+    function SourceErrorFactory(message, source, code, action) {
+      return new SourceError(message, source, code, action);
+    }
+
+    function SourceError(message, source, code, action) {
+      var _this = this;
+
+      _this.message = message;
+      _this.context = {
+        source: source,
+        code: code,
+        action: action
+      };
+    }
+  }
+})();
+
+(function() {
+  'use strict';
+
+  angular.module('angular-jsonapi')
   .factory('AngularJsonAPIModelErrorsManager', AngularJsonAPIModelErrorsManagerWrapper);
 
   function AngularJsonAPIModelErrorsManagerWrapper() {
@@ -2247,38 +2279,6 @@
       } else {
         return _this.errors[key] !== undefined && _this.errors[key].length > 0;
       }
-    }
-  }
-})();
-
-(function() {
-  'use strict';
-
-  angular.module('angular-jsonapi')
-  .factory('AngularJsonAPIModelSourceError', AngularJsonAPIModelSourceErrorWrapper);
-
-  function AngularJsonAPIModelSourceErrorWrapper() {
-    SourceError.prototype = Object.create(Error.prototype);
-    SourceError.prototype.constructor = SourceError;
-    SourceError.prototype.name = 'SourceError';
-
-    return {
-      create: SourceErrorFactory
-    };
-
-    function SourceErrorFactory(message, source, code, action) {
-      return new SourceError(message, source, code, action);
-    }
-
-    function SourceError(message, source, code, action) {
-      var _this = this;
-
-      _this.message = message;
-      _this.context = {
-        source: source,
-        code: code,
-        action: action
-      };
     }
   }
 })();
@@ -3211,7 +3211,7 @@
             }
           });
 
-          deferred.resolve(response.data);
+          deferred.resolve(response);
         }
       }
 

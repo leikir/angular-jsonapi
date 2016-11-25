@@ -176,7 +176,7 @@
             }
           });
 
-          deferred.resolve(response.data);
+          deferred.resolve(response);
         }
       }
 
